@@ -62,5 +62,4 @@ describe Oystercard do
       expect{card.touch_out(station)}.to change{card.balance}.by(-Oystercard::FARE)
     end
   end
-
-  context 'journey
+end

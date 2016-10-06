@@ -31,7 +31,7 @@ class Oystercard
     @current_journey[:exit] = station
     @entry_station = nil
     @history << current_journey
-    # @current_journey = {entry: nil, exit: nil}
+    @current_journey = {entry: nil, exit: nil}
   end
 
   def in_journey?
