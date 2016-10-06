@@ -4,11 +4,11 @@ describe Oystercard do
   subject(:card) {described_class.new}
 
     before do
-      subject.top_up(Oystercard::MINIMUM_BALANCE)
+      card.top_up(Oystercard::MONEY_LIMIT)
     end
 
-  #, balance => Oystercard::MINIMUM_BALANCE
-  let(:station) {double :station}
+  let(:station) {double :station, name: "angel", zone: 1}
+  let(:bank) {double :bank, name: "bank", zone: 3}
 
   context 'balance' do
     it 'have balance' do
@@ -19,47 +19,43 @@ describe Oystercard do
   context '#top up' do
 
     it 'limits top up value MONEY_LIMIT' do
-      card.top_up(Oystercard::MONEY_LIMIT - 1)
       expect{card.top_up(1)}.to raise_error "Card limit is #{Oystercard::MONEY_LIMIT}."
-    end
-
-  end
-
-  context '#money coming off card' do
-
-    it 'deducts fare per journey' do
-      card.touch_in(station)
-      card.touch_out(station)
-      expect(card.balance).to eq Oystercard::MINIMUM_BALANCE - Oystercard::FARE
     end
 
   end
 
   context 'touching in and out' do
 
-    it 'responds to in_journey' do
-      expect(card.in_journey?).to eq(true).or eq(false)
-    end
-
-    it 'touching in registers a current journey', focus: true do
+    it 'touching in registers a current journey' do
       card.touch_in(station)
       expect(card).to respond_to :current_journey
     end
 
     it 'raises error if card below minimum balance when touching in' do
-      card.top_up(-1)
+      card.top_up(-Oystercard::MONEY_LIMIT)
       expect{card.touch_in(station)}.to raise_error "Insufficient funds for journey"
     end
 
     it 'touching out registers the card as no longer being in journey' do
       card.touch_in(station)
-      card.touch_out(station)
-      expect(card.in_journey?).to eq false
+      card.touch_out(bank)
+      expect(card.in_use).to eq false
     end
 
     it 'charges the card on touch out' do
       card.touch_in(station)
-      expect{card.touch_out(station)}.to change{card.balance}.by(-Oystercard::FARE)
+      expect{card.touch_out(bank)}.to change{card.balance}.by(-3)
+    end
+
+    it 'charges the card a penalty fare is you double touch in' do
+      card.touch_in(station)
+      expect{card.touch_in(bank)}.to change{card.balance}.by(-6)
+    end
+
+    it 'adds a complete journey to the journey history' do
+      card.touch_in(station)
+      card.touch_out(bank)
+      expect(card.history).to eq [[card.current_journey]]
     end
   end
 end
