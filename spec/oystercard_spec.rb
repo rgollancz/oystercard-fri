@@ -41,9 +41,9 @@ describe Oystercard do
       expect(card.in_journey?).to eq(true).or eq(false)
     end
 
-    it 'touching in registers that the card is in journey' do
+    it 'touching in registers a current journey', focus: true do
       card.touch_in(station)
-      expect(card.in_journey?).to eq true
+      expect(card).to respond_to :current_journey
     end
 
     it 'raises error if card below minimum balance when touching in' do
