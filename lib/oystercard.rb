@@ -30,7 +30,7 @@ class Oystercard
   end
 
   def finish_journey(station)
-    @current_journey = Journey.new('none') && deduct(true) unless @in_use
+    (@current_journey = Journey.new(nil)) && deduct(true) unless @in_use
     @current_journey.end_journey(station)
     deduct(false)
     @in_use = false
