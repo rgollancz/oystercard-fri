@@ -25,24 +25,19 @@ class Oystercard
   end
 
   def touch_out(station)
-    @in_use == false ? penalty_touch_out : normal_touch_out(station)
+    finish_journey(station)
     add_journey(@current_journey)
+  end
+
+  def finish_journey(station)
+    @current_journey = Journey.new('none') && deduct(true) unless @in_use
+    @current_journey.end_journey(station)
+    deduct(false)
     @in_use = false
   end
 
-  def penalty_touch_out
-    @current_journey = Journey.new('none', 'n/a')
-    deduct(true)
-  end
-
-  def normal_touch_out(station)
-    @current_journey.end_journey(station)
-    deduct(false)
-  end
-
   def deduct(penalty)
-    penalty = penalty
-    penalty == false ? charge = @current_journey.fare : charge = @current_journey.penalty
+    charge = @current_journey.fare(penalty)
     @balance-= charge
   end
 

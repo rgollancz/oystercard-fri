@@ -42,14 +42,9 @@ describe Oystercard do
       expect(card.in_use).to eq false
     end
 
-    it 'charges the card on touch out' do
+    it 'charges the card a penalty fare if you double touch in' do
       card.touch_in(station)
-      expect{card.touch_out(bank)}.to change{card.balance}.by(-3)
-    end
-
-    it 'charges the card a penalty fare is you double touch in' do
-      card.touch_in(station)
-      expect{card.touch_in(bank)}.to change{card.balance}.by(-6)
+      expect{card.touch_in(bank)}.to change{card.balance}.by(-Journey::PENALTY_CHARGE)
     end
 
     it 'adds a complete journey to the journey history' do
