@@ -47,10 +47,10 @@ describe Oystercard do
       expect{card.touch_in(bank)}.to change{card.balance}.by(-Journey::PENALTY_CHARGE)
     end
 
-    it 'adds a complete journey to the journey history' do
+    it 'adds a complete journey to the journey log' do
       card.touch_in(station)
       card.touch_out(bank)
-      expect(card.history).to eq [[card.current_journey]]
+      expect(card.journey_log).to eq [[card.current_journey]]
     end
   end
 end

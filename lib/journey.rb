@@ -9,7 +9,7 @@ class Journey
     @entry_station = station
   end
 
-  def end_journey(station)
+  def set_end_station(station)
     @exit_station = station
   end
 
